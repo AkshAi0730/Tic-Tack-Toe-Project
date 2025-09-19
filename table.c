@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 int l, c, n;
 
@@ -71,57 +72,203 @@ void table_print(int size, char table[size][size]){
     line(size);
 }
 
+//checking for winning posibilities with row
+int check_win_row(int row, int col,int size, char table[size][size],char symbol,int player){
+    int j = 0; int win = 0;
+
+    //check left boarder
+    if(row >= 2)
+    {row = row-2, j = 5;}
+    else if(row >= 1)
+    {row = row - 1, j =4;}
+    else
+    {row =row, j = 3;}
+
+    //check right border
+    if(row + 2 >= size){
+        j = j;}
+    else if(row + 1 >= size){
+        j = j-1;}
+    else{
+        j = j-2;}
+
+    int i = 0;
+    //check win condition of row
+    do {
+            if((table[row][col] == symbol)&& (table[row+1][col] == symbol) && (table[row+2][col] == symbol))
+	    {printf("PLayer %d with %c won the game \n",player,symbol);
+		    win = 1;
+		    return win;}
+    row++, i++;
+    }while(i < j);
+    return win;
+}
+
+//checking for winning posibilities with column
+int check_win_col(int row, int col,int size, char table[size][size],char symbol,int player){
+    int j = 0; int win = 0;
+
+    //check top border
+    if(col >= 2)
+    {col = col-2, j = 5;}
+    else if(col >= 1)
+    {col = col - 1, j =4;}
+    else
+    {col =col, j = 3;}
+
+    //check bottom border
+    if(col + 2 >= size){
+        j = j;}
+    else if(col + 1 >= size){
+        j = j-1;}
+    else{
+        j = j-2;}
+
+    int i = 0;
+    //check win condition of column
+    do {
+            if((table[row][col] == symbol) && (table[row][col+1] == symbol) && (table[row][col+2] == symbol))
+	    {printf("player %d with %c won the game",player,symbol);
+		    win = 1;
+		    return win;}
+    col++ ; i++;
+    } while(i < j);
+    return win;
+}
+
+/* checking for winning posibilities with diagonal like 1 1 , 2 2 , 3 3 */
+int check_win_diagonal_1(int row, int col,int size, char table[size][size],char symbol,int player){
+    int  j = 0; int win = 0;
+
+    //check top and right border
+    if(row >= 2 && col >= 2)
+    {row = row-2,col = col-2, j = 5;}
+    else if(row >= 1 && col >= 1)
+    {row = row - 1,col = col -1, j =4;}
+    else
+    {col = col, row = row, j = 3;}
+
+    //check bottom and left border
+    if((row + 2 >= size) && (col + 2 >= size))
+        j = j;
+    else if((row + 1 >= size) && (col + 1 >= size))
+        j = j-1;
+    else
+        j = j-2;
+
+    int i = 0;
+    //check win condition of diagonal_1
+    do{
+    if((table[row][col] == symbol) && (table[row+1][col+1] == symbol) && (table[row+2][col+2] == symbol))
+    	{printf("player %d with %c won the game.\n", player, symbol);
+	win = 1;
+	return win;}
+    row++; col++ ; i++;
+    } while(i < j);
+    return win;
+}
+
+/*checking for winning posibilities with diaoganal like 1 3, 2 2 , 3 1 */
+int check_win_diagonal_2(int row, int col,int size, char table[size][size],char symbol,int player){
+    int j = 0; int win = 0;
+
+    //check top and right border
+    if(row >= 2 && col >= 2)
+    {row = row-2,col = col+2, j = 5;}
+    else if(row >= 1 && col >= 1)
+    {row = row - 1,col = col+1, j = 3;}
+    else
+    {row = row, col = col, j = 1;}
+
+    //check bottom and left border
+    if((row + 2 >= size) && (col + 2 >= size))
+        j = j;
+    else if((row + 1 >= size) && (col + 1 >= size))
+        j = j-1;
+    else
+        j = j-2;
+
+    int i = 0;
+    //check win condition of diagonal_2
+    do {
+            if((table[row][col] == symbol) && (table[row+1][col-1] ==symbol) && (table [row+2][col-2] == symbol))
+	    {printf("player %d with %c won the game",player,symbol);
+		    win = 1;
+		    return win;}
+    row++, col-- , i++;
+    } while(i < j);
+    return win;
+}
+
+//checking for winner of the game combined row , column , dioganal_1 , dioganal_2
+int win_state(int row, int col, int size,  char table[size][size],char symbol,int num){
+    return check_win_diagonal_1(row, col, size, table, symbol, num) || 
+	    check_win_diagonal_2(row, col, size, table, symbol, num) || 
+	    check_win_row(row, col, size, table, symbol, num) || 
+	    check_win_col(row, col, size, table, symbol, num);
+}
+
 //user get repeated input for two or three player 
 void user_input(int size,int mode, char table[size][size]){
-    char player1 = 'X'; char player2 = 'O'; char symbol; char player3 = 'Z';
-    int col; int row;
-    int turn = 0;
-    
+    char player1 = 'X'; char player2 = 'O'; char symbol; char player3 = 'Z';int turn = 0;
+    int col; int row; int done = 0;
+
     //switch player turn for get input
     do {
         switch (turn % mode){
             //get input for user 1
             case 1:{
-                printf("Enter row and coloumn player %c (N N): ", player2);
+                printf("Enter row and column player %c (N N): ", player2);
                 scanf("%d %d", &row, &col);
                 symbol = player2;
                 break;}
             //get input for user 2
             case 0:{
-                printf("Enter row and coloumn player %c (N N): ", player1);
+                printf("Enter row and column player %c (N N): ", player1);
                 scanf("%d %d", &row, &col);
                 symbol = player1;
                 break;}
             case 2:{
-                printf("Enter row and coloumn player %c (N N): ", player3);
+                printf("Enter row and column player %c (N N): ", player3);
                 scanf("%d %d", &row, &col);
                 symbol = player3;
                 break;}
             }
+            int num = (turn % mode) + 1;
             turn++;
-    
+	    row = row-1 ; col = col-1;
+
         // place symbol in table
-        if(row >=1 && row <= size && col >=1 && col <= size) {
-            if (table[row-1][col-1] == ' ') {
-                table[row-1][col-1] = symbol;  // update board
+        if(row >=0 && row < size && col >=0 && col < size) {
+            if (table[row][col] == ' ') {
+                table[row][col] = symbol;  // update board
             } else {
                 turn--;
                 printf("Cell already taken!\n");
             }
         } else {
             turn--;
-            printf("Invalid position!\n");
+           printf("Invalid position!\n");
         }
-            table_print(size, table);
+	
+	//checking win state
+        done = win_state(row, col, size, table, symbol, num);
+	//print updated table
+        table_print(size, table);
+
+	if(done == 1){
+		printf("Game Over! Player %d wins. \n", num);
+		break;}
     }while (turn < size*size);
 }
+
 
 //User vs computer input
 void user_vs_computer_input(){
     
 }
 
-void main(){
+int main(){
     //Get the size of table
     int size;
     printf("Enter Table Size (3 - 9):\n");
@@ -158,4 +305,5 @@ void main(){
     else{
     user_input(size, mode, table);
     }
+    return 0;
 }
