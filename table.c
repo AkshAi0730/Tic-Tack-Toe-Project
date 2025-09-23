@@ -71,7 +71,8 @@ void table_print(int size, char table[size][size]){
     l = 0;
     line(size);
 }
-
+////////// Win State only if 3 in row game will be ended///////////////
+/*
 //checking for winning posibilities with row
 int check_win_row(int row, int col,int size, char table[size][size],char symbol,int player){
     int j = 0; int win = 0;
@@ -136,7 +137,7 @@ int check_win_col(int row, int col,int size, char table[size][size],char symbol,
     return win;
 }
 
-/* checking for winning posibilities with diagonal like 1 1 , 2 2 , 3 3 */
+ checking for winning posibilities with diagonal like 1 1 , 2 2 , 3 3 
 int check_win_diagonal_1(int row, int col,int size, char table[size][size],char symbol,int player){
     int  j = 0; int win = 0;
 
@@ -168,7 +169,7 @@ int check_win_diagonal_1(int row, int col,int size, char table[size][size],char 
     return win;
 }
 
-/*checking for winning posibilities with diaoganal like 1 3, 2 2 , 3 1 */
+checking for winning posibilities with diaoganal like 1 3, 2 2 , 3 1 
 int check_win_diagonal_2(int row, int col,int size, char table[size][size],char symbol,int player){
     int j = 0; int win = 0;
 
@@ -206,6 +207,51 @@ int win_state(int row, int col, int size,  char table[size][size],char symbol,in
 	    check_win_diagonal_2(row, col, size, table, symbol, num) || 
 	    check_win_row(row, col, size, table, symbol, num) || 
 	    check_win_col(row, col, size, table, symbol, num);
+}
+*/
+
+//Check win state for [size]  number of identical Charecter 
+int win_state(int row, int col, int size, char table[size][size], char symbol) {
+	int i;
+
+	// 1. Check row
+	int count = 0;
+	for (i = 0; i < size; i++) {
+	if (table[row][i] == symbol)
+	count++;
+	}
+	if (count == size) return 1;
+
+	// 2. Check column
+	count = 0;
+	for (i = 0; i < size; i++) {
+	if (table[i][col] == symbol)
+	count++;
+	}
+	if (count == size) return 1;
+
+	// 3. Check main diagonal
+	if (row == col) {
+	count = 0;
+	for (i = 0; i < size; i++) {
+	if (table[i][i] == symbol)
+	count++;
+	}
+	if (count == size) return 1;
+	}
+
+	// 4. Check anti-diagonal
+	if (row + col == size - 1) {
+	count = 0;
+	for (i = 0; i < size; i++) {
+	if (table[i][size - 1 - i] == symbol)
+	count++;
+	}
+	if (count == size) return 1;
+	}
+
+	// No winner yet
+	return 0;
 }
 
 //user get repeated input for two or three player 
@@ -252,7 +298,11 @@ void user_input(int size,int mode, char table[size][size]){
         }
 	
 	//checking win state
-        done = win_state(row, col, size, table, symbol, num);
+	done = win_state(row, col, size, table, symbol);
+	if (done == 1){
+	printf("Player %d with %c Wins! \n", num, symbol);
+	break;
+	}
 	//print updated table
         table_print(size, table);
 
