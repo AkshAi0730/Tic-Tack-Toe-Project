@@ -601,3 +601,4 @@ int main(){
 	printf("Game finished. See game_log.txt for full move log.\n");
     return 0;
 }
+
