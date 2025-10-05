@@ -31,5 +31,5 @@ void play_three_players(int size, char **board);
 
 /// Utility ///
 void clear_input_buffer(void);
-
+int game_mode(void);
 #endif
