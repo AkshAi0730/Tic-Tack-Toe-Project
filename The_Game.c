@@ -7,6 +7,49 @@
 
 static int l, c, n;
 
+// ----- The Game begins ----- //
+int main(){
+        //Get the size of table
+        int size;
+        printf("Enter Table Size (3 - 9):\n");
+        scanf("%d", &size);
+
+    //Check if Board size is Correct
+        while(size < 3 || size > 9){
+                clear_input_buffer();
+                printf("Enter a Number Between 3 and 9 : ");
+                scanf("%d", &size);
+        }
+        clear_input_buffer();
+
+        srand((unsigned)time(NULL));
+
+        char **board = allocate_board(size);
+        initialize_board(size, board);
+
+        /* clear previous log file so logs start fresh */
+        FILE *f = fopen("game_log.txt", "w");
+        if (f) {
+                fprintf(f, "Tic-Tac-Toe game log (board size: %d)\n", size);
+                fclose(f);
+        }
+
+        int mode = game_mode();
+        //Check if Game mode is Correct
+        if (mode == 1){
+                play_user_vs_computer(size, board);
+        }else if (mode == 2){
+                play_user_vs_user(size, board);
+        }else {
+                play_three_players(size, board);
+        }
+
+        free_board(size, board);
+        printf("Game finished. See game_log.txt for full move log.\n");
+    return 0;
+}
+
+
 /* Memory allocation for Array */
 char **allocate_board(int size){
 	char **board = malloc(size * sizeof(char*));
@@ -25,6 +68,8 @@ char **allocate_board(int size){
 	return board;
 }
 
+
+///////////////////----- Functions -----///////////////////////
 /* Initalizing Board */
 void initialize_board(int size, char **board){
 	for(int i = 0; i < size ; ++i)
@@ -559,46 +604,3 @@ int game_mode(){
 	} while (mode < 1 || mode > 3);
 	return mode;
 }
-
-// ----- The Game begins ----- //
-int main(){
-	//Get the size of table
-	int size;
-	printf("Enter Table Size (3 - 9):\n");
-	scanf("%d", &size);
-    
-    //Check if Board size is Correct
-	while(size < 3 || size > 9){
-		clear_input_buffer();
-		printf("Enter a Number Between 3 and 9 : ");
-		scanf("%d", &size);
-	}
-	clear_input_buffer();
-	
-	srand((unsigned)time(NULL));
-
-	char **board = allocate_board(size);
-	initialize_board(size, board);
-
-	/* clear previous log file so logs start fresh */
-	FILE *f = fopen("game_log.txt", "w");
-	if (f) {
-		fprintf(f, "Tic-Tac-Toe game log (board size: %d)\n", size);
-		fclose(f);
-	}
-
-	int mode = game_mode();
-	//Check if Game mode is Correct
-	if (mode == 1){
-		play_user_vs_computer(size, board);
-	}else if (mode == 2){
-		play_user_vs_user(size, board);
-	}else {
-		play_three_players(size, board);
-	}
-
-	free_board(size, board);
-	printf("Game finished. See game_log.txt for full move log.\n");
-    return 0;
-}
-
